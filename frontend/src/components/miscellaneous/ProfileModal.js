@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import {
   Button,
   Dialog,
+  Avatar,
   Typography,
   DialogTitle,
   DialogContent,
@@ -19,13 +20,13 @@ const ProfileModal = ({ user, children }) => {
 
   return (
     <>
-      <div>
+      {/* <div> */}
         {children ? (
           <span onClick={handleClickOpen}>{children}</span>
         ) : (
           <i className="fa-solid fa-user"></i>
         )}
-      </div>
+      {/* </div> */}
       <Dialog
         open={open}
         onClose={handleClose}
@@ -40,7 +41,7 @@ const ProfileModal = ({ user, children }) => {
             alignItems: "center",
           }}
         >
-          <span style={{width:"98%",textAlign:"center"}}>{user.name}</span>
+          <span style={{ width: "98%", textAlign: "center" }}>{user.name}</span>
           <Button
             onClick={handleClose}
             sx={{
@@ -50,20 +51,19 @@ const ProfileModal = ({ user, children }) => {
               borderRadius: "50%",
             }}
           >
-            <i class="fa-solid fa-xmark"></i>
+            <i className="fa-solid fa-xmark"></i>
           </Button>
         </DialogTitle>
-        <DialogContent >
+        <DialogContent>
           {/* <DialogContentText id="alert-dialog-description">
             Let Google help apps determine location. This means sending
             anonymous location data to Google, even when no apps are running.
           </DialogContentText> */}
-          <span
+          {/* <span
             style={{
               display: "flex",
               justifyContent: "center",
-              width: "260px",
-              height: "260px",
+
               borderRadius: "50%",
               overflow: "hidden",
               margin: "auto",
@@ -71,7 +71,12 @@ const ProfileModal = ({ user, children }) => {
             }}
           >
             <img src={user.pic} alt={user.name} />
-          </span>
+          </span> */}
+          <Avatar
+            sx={{ width: "260px", height: "260px", cursor: "pointer",m:"auto",mb:"25px",fontSize:"150px" }}
+            alt={user.name}
+            src={user.pic}
+          />
           <Typography variant="h6" fontFamily="Work Sans">
             Email: {user.email}
           </Typography>

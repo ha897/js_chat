@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Box } from "@chakra-ui/layout";
 import { ChatState } from "../context/chatProvider";
 
@@ -7,15 +8,34 @@ import ChatBox from "../components/ChatBox.js";
 
 const ChatPage = () => {
   const { user } = ChatState();
+  const [fetchAgain,setFetchAgain] = useState(false);
 
   return (
-    <div style={{ width: "100%" }}>
-      {user && <SideDrawer />}
-      <Box d="flex" justifyContent="space-between" w="100%" h="91.5vh" p="10px">
-        {user && <MyChats />}
-        {user && <ChatBox />}
-      </Box>
-    </div>
+    // <div style={{ width: "100%",display:"flex",flexDirection:"column",height:"100vh" }}>
+    //   {user && <SideDrawer />}
+    //   <Box d="flex" justifyContent="space-between" w="100%" sx={{flex: "1"}} p="10px">
+    //     {user && <MyChats fetchAgain={fetchAgain} setFetchAgain={setFetchAgain}/>}
+    //     {user && <ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain}/>}
+    //   </Box>
+    // </div>
+    <div style={{ width: "100%", display:"flex", flexDirection:"column", height:"100vh" }}>
+  {user && <SideDrawer />}
+
+  <Box 
+    sx={{ 
+      flex: "1 1 auto",   // يتمدد ليأخذ كل الباقي
+      minHeight: 0,       // مهم لتجنّب مشاكل الـ scroll
+      display: "flex", 
+      justifyContent: "space-between", 
+      width: "100%", 
+      p: "10px" 
+    }}
+  >
+    {user && <MyChats fetchAgain={fetchAgain} setFetchAgain={setFetchAgain}/>}
+    {user && <ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain}/>}
+  </Box>
+</div>
+
   );
 };
 

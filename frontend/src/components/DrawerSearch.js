@@ -44,12 +44,12 @@ export default function DrawerSearch({ user, children }) {
       };
 
       const { data } = await axios.get(
-        `http://127.0.0.1:5000/api/user?search=${encodeURIComponent(search)}`,
+        `http://localhost:5000/api/user?search=${encodeURIComponent(search)}`,
         config
       );
       setLoading(false);
       setSearchResult(data);
-      console.log("Search results:", data[0]);
+      console.log("Search results3:", data[0]);
     } catch (error) {
       console.error("Error during search:", error);
       toast("An error occurred while searching", "error");
@@ -71,11 +71,10 @@ export default function DrawerSearch({ user, children }) {
       };
 
       const { data } = await axios.post(
-        "http://127.0.0.1:5000/api/chat",
+        "http://localhost:5000/api/chat",
         { userId },
         config
       );
-      // setSelectedChat(data);
       if (!chats.find((c) => c._id === data._id)) {
         setChats([data, ...chats]);
       }
@@ -88,7 +87,7 @@ export default function DrawerSearch({ user, children }) {
   };
 
   const DrawerList = (
-    <Box sx={{ width: 300, p: "15px" }} role="presentation">
+    <Box sx={{ width: 300, p: "15px",height:"100%" ,display:"flex",flexDirection:"column" }} role="presentation">
       <List>
         <ListItem key={0} disablePadding>
           {/* <ListItemText primary= /> */}
@@ -112,28 +111,31 @@ export default function DrawerSearch({ user, children }) {
         </ListItem>
       </List>
       <Divider />
-      <List>
-        {loading ? (
-          <Stack spacing={1}>
-            <Skeleton variant="rectangular" width="100%" height={118} />
-            <Skeleton variant="rectangular" width="100%" height={118} />
-            <Skeleton variant="rectangular" width="100%" height={118} />
-          </Stack>
-        ) : searchResult.length === 0 ? (
-          <Typography>No users found</Typography>
-        ) : (
-          searchResult.map((userObj) => (
-            <ListItem key={userObj._id} disablePadding>
-              <ListItemButton
-                style={{ padding: "4px" }}
-                onClick={() => accessChat(userObj._id)}
-              >
-                <UserListItem user={userObj} />
-              </ListItemButton>
-            </ListItem>
-          ))
-        )}
-      </List>
+      <Box sx={{ overflowY: "auto",flex: 1 }} role="presentation">
+        <List>
+          {loading ? (
+            <Stack spacing={1}>
+              <Skeleton variant="rectangular" width="100%" height={47} />
+              <Skeleton variant="rectangular" width="100%" height={47} />
+              <Skeleton variant="rectangular" width="100%" height={47} />
+            </Stack>
+          ) :
+           searchResult.length === 0 ? (
+            <Typography>No users found</Typography>
+          ) : (
+            searchResult.map((userObj) => (
+              <ListItem key={userObj._id} disablePadding>
+                <ListItemButton
+                  style={{ padding: "4px" }}
+                  onClick={() => accessChat(userObj._id)}
+                >
+                  <UserListItem user={userObj} />
+                </ListItemButton>
+              </ListItem>
+            ))
+          )}
+        </List>
+      </Box>
     </Box>
   );
   return (

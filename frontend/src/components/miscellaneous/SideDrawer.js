@@ -14,13 +14,16 @@ import {
 import ProfileModal from "./ProfileModal";
 import { ChatState } from "../../context/chatProvider";
 import { useNavigate } from "react-router-dom";
+import Badge from "@mui/material/Badge";
+import { getSender } from "../../config/ChatLogics";
 
 const SideDrawer = () => {
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingChat, setLoadingChat] = useState(false);
-  const { user } = ChatState();
+  const { user, selectedChat, setSelectedChat, notification, setNotification } =
+    ChatState();
   const navigate = useNavigate();
 
   // لإدارة القوائم المنسدلة
@@ -29,14 +32,19 @@ const SideDrawer = () => {
 
   const handleOpenBell = (event) => setAnchorElBell(event.currentTarget);
   const handleCloseBell = () => setAnchorElBell(null);
+  const goToChat = (notf) => {
+    setSelectedChat(notf.chat)
+setNotification((prev) => prev.filter((n) => n._id !== notf._id));
+  setAnchorElBell(null)
+  };
 
   const handleOpenUser = (event) => setAnchorElUser(event.currentTarget);
   const handleCloseUser = () => setAnchorElUser(null);
-  const logoutHandler = () =>{
+  const logoutHandler = () => {
     localStorage.removeItem("user-info");
-    navigate("/")
-
-  }
+    setSelectedChat(undefined);
+    navigate("/");
+  };
   return (
     <Box
       display="flex"
@@ -59,7 +67,7 @@ const SideDrawer = () => {
             "&:focus": { boxShadow: "none" },
             "&:active": { boxShadow: "none" },
           }}> */}
-        
+
         <DrawerSearch user={user}>
           <i className="fas fa-search"></i>
           <Typography sx={{ display: { xs: "none", md: "flex" }, px: 2 }}>
@@ -86,7 +94,13 @@ const SideDrawer = () => {
             mr: 1,
           }}
         >
-          <i className="fa-solid fa-bell"></i>
+          {notification.length > 0 ? (
+            <Badge badgeContent={notification.length} color="primary">
+              <i className="fa-solid fa-bell"></i>
+            </Badge>
+          ) : (
+            <i className="fa-solid fa-bell"></i>
+          )}
         </IconButton>
 
         <Menu
@@ -94,7 +108,16 @@ const SideDrawer = () => {
           open={Boolean(anchorElBell)}
           onClose={handleCloseBell}
         >
-          <MenuItem onClick={handleCloseBell}>No Notifications</MenuItem>
+          {notification.length > 0 ? (
+            notification.map((notif) => (
+              <MenuItem onClick={()=>goToChat(notif)}>
+                {/* get sender */}
+                new message in {notif.chat.isGroupChat ?notif.chat.chatName:getSender(user,notif.chat.users)}
+              </MenuItem>
+            ))
+          ) : (
+            <MenuItem onClick={handleCloseBell}>No Notifications</MenuItem>
+          )}
         </Menu>
 
         {/* قائمة المستخدم */}

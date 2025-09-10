@@ -8,9 +8,9 @@ const HomePage = () => {
     const navigate = useNavigate();
   
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("userInfo"));
+    const user = JSON.parse(localStorage.getItem("user-info"));
 
-    if (user) navigate.push("/chats");
+    if (user) navigate("/chats");
   }, [navigate]);
 
   return (
