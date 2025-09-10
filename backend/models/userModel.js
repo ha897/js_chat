@@ -8,8 +8,9 @@ const userSchema = mongoose.Schema(
     password: { type: String, required: true, minlength: 6 },
     pic: {
       type: String,
+      // if any error with default img show image with the first leter of user
       default:
-        "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg",
     },
   },
   { timestamps: true }

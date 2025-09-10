@@ -58,7 +58,7 @@ const allUsers = asyncHandler(async (req, res) => {
       { email: { $regex: req.query.search, $options: "i" } },
     ]
   } : {};
-  const users = await User.find(keyword).find({ _id: { $ne: req.user._id } });
+  const users = await User.find(keyword).find({ _id: { $ne: req.user._id } }).select("-password");
   // const users = await User.find(keyword).find({ _id: { $ne: "6899fa0eb06783442161c87f" } });
 
   res.send(users);

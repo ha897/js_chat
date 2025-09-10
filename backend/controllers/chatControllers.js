@@ -116,7 +116,7 @@ const renameGroup = asyncHandler(async (req, res) => {
 const addToGroup = asyncHandler(async (req, res) => {
   const { chatId, userId } = req.body;
   
-  const added = Chat.findByIdAndUpdate(
+  const added = await Chat.findByIdAndUpdate(
     chatId,
     {
       $push: { users: userId },
@@ -132,23 +132,66 @@ const addToGroup = asyncHandler(async (req, res) => {
     res.json(added);
   }
 });
+// const removeFromGroup = asyncHandler(async (req, res) => {
+//   const { chatId, userId } = req.body;
+
+//   const removed = await Chat.findByIdAndUpdate(
+//     chatId,
+//     {
+//       $pull: { users: userId },
+//     },
+//     { new: true }
+//   )
+//     .populate("users", "-password")
+//     .populate("groupAdmin", "-password");
+
+//   if (!removed) {
+//     res.status(404).send("Chat Not Found");
+//   } else {
+//     res.json(removed);
+//   }
+// })
 const removeFromGroup = asyncHandler(async (req, res) => {
   const { chatId, userId } = req.body;
 
-  const removed = await Chat.findByIdAndUpdate(
+  let chat = await Chat.findById(chatId)
+    .populate("users", "-password")
+    .populate("groupAdmin", "-password");
+
+  if (!chat) {
+    return res.status(404).send("Chat Not Found");
+  }
+  const isAdminRemoved = chat.groupAdmin._id.toString() === userId;
+
+  chat = await Chat.findByIdAndUpdate(
     chatId,
-    {
-      $pull: { users: userId },
-    },
+    { $pull: { users: userId } },
     { new: true }
   )
     .populate("users", "-password")
     .populate("groupAdmin", "-password");
 
-  if (!removed) {
-    res.status(404).send("Chat Not Found");
-  } else {
-    res.json(removed);
+  // if admin leave the group set random admin
+  if (isAdminRemoved) {
+    if (chat.users.length > 0) {
+      const randomIndex = Math.floor(Math.random() * chat.users.length);
+      const newAdmin = chat.users[randomIndex];
+
+      chat.groupAdmin = newAdmin._id;
+      await chat.save();
+
+      // get data with new admin
+      chat = await Chat.findById(chatId)
+        .populate("users", "-password")
+        .populate("groupAdmin", "-password");
+    } else {
+      // if no users
+      chat.groupAdmin = null;
+      await chat.save();
+    }
   }
-})
+
+  res.json(chat);
+});
+
 module.exports = { accessChat, fetchChat, createGroupChat, renameGroup, addToGroup, removeFromGroup };
